@@ -32,7 +32,7 @@ case "${daily_timemachine_clients_state:-NO}" in
 				fi
 				if [ -f "$i/com.apple.TimeMachine.SnapshotHistory.plist" ]; then 
 					echo "Last snapshots (Max 10):"
-					/usr/libexec/PlistBuddy -c print "$i/com.apple.TimeMachine.SnapshotHistory.plist" | awk '$1 == "com.apple.backupd.SnapshotName" {print "    "$3}' | tail 
+					/usr/libexec/PlistBuddy -c print "$i/com.apple.TimeMachine.SnapshotHistory.plist" | awk '$1 == "com.apple.backupd.SnapshotCompletionDate" {print "    "$3,$4,$5,$6,$7,$8}' | tail
 				fi
 				echo ""
 			done
