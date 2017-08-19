@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ -r /etc/defaults/periodic.conf ]
 then
@@ -10,7 +10,16 @@ case "${daily_timemachine_clients_state:-NO}" in
     [Yy][Ee][Ss])
 		echo ""
 		echo "Time Machine Backup Client Status:"
-		/Applications/Server.app/Contents/ServerRoot/usr/sbin/serveradmin settings timemachine | awk -F: '{print $4}'|uniq| while read LINE
+        tempfile="/tmp/`uuidgen`"
+        if [ `sw_vers -productVersion| awk -F. '{print $2}'` -ge 13 ]; then
+		    /Applications/Server.app/Contents/ServerRoot/usr/sbin/serveradmin settings sharing | \
+            grep "timeMachineBackup =" | \
+            awk -F: '{print $4}'| uniq > $tempfile
+        else
+		    /Applications/Server.app/Contents/ServerRoot/usr/sbin/serveradmin settings timemachine | \
+            awk -F: '{print $4}'| uniq > $tempfile
+        fi
+        cat "$tempfile" | while read LINE
 		do
 			TMSHAREPOINT="$LINE"
 			if [ ! -d "${TMSHAREPOINT}" ]; then continue ; fi
